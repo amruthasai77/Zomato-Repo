@@ -1,5 +1,5 @@
 # Use Node.js 16 slim as the base image
-FROM node:16-slim
+FROM node:19-alpine AS lakshmi
 
 # Set the working directory
 WORKDIR /app
@@ -9,6 +9,22 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the React app
+RUN npm run build
+
+# Expose port 3000 (or the port your app is configured to listen on)
+EXPOSE 3000
+
+
+
+FROM lakshmi AS final
+
+# Install dependencies
+RUN npm install --production
 
 # Copy the rest of the application code
 COPY . .
